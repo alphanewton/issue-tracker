@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Callout, TextField, Text } from "@radix-ui/themes";
+import { Button, TextField } from "@radix-ui/themes";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from "react-hook-form";
@@ -26,7 +26,6 @@ function NewIssuePage() {
     resolver: zodResolver(createIssueSchema),
   });
 
-  const [error, setError] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
 
   return (
@@ -40,7 +39,6 @@ function NewIssuePage() {
             router.push("/issues");
           } catch (error) {
             setSubmitting(false);
-            setError("An unexpected error occurred. ");
           }
         })}
       >
@@ -48,6 +46,7 @@ function NewIssuePage() {
           <TextField.Input placeholder="title" {...register("title")} />
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
+
         <Controller
           name="description"
           control={control}
@@ -55,7 +54,6 @@ function NewIssuePage() {
             <SimpleMDE placeholder="Description" {...field} />
           )}
         />
-
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
         <Button disabled={isSubmitting}>
