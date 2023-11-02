@@ -1,9 +1,10 @@
 import { Button } from "@radix-ui/themes";
-import Link from "next/link";
 import prisma from "@/prisma/client";
 import { Table } from "@radix-ui/themes";
 import IssueStatusBadge from "../components/IssueStatusBadge";
-import delay from "delay";
+import Link from "next/link";
+import NewtLink from "../components/Link";
+// import delay from "delay";
 
 async function IssuesPage() {
   const issues = await prisma.issue.findMany();
@@ -32,7 +33,7 @@ async function IssuesPage() {
           {issues.map((issue) => (
             <Table.Row key={issue.id}>
               <Table.Cell>
-                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+                <NewtLink href={`/issues/${issue.id}`}>{issue.title}</NewtLink>
                 <div className="block md:hidden">
                   <IssueStatusBadge status={issue.status} />
                 </div>
