@@ -6,6 +6,8 @@ import { AiFillBug } from "react-icons/ai";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
 import { Avatar, Box, Container, DropdownMenu, Flex } from "@radix-ui/themes";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function NavBar() {
   const currentPath = usePathname();
@@ -51,6 +53,7 @@ function AuthStatus() {
 
   return (
     <Box>
+      {status === "loading" && <Skeleton width="3rem" />}
       {status === "authenticated" && (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
