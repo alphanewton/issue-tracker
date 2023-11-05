@@ -5,9 +5,21 @@ import IssueStatusBadge from "../../components/IssueStatusBadge";
 import Link from "next/link";
 import NewtLink from "../../components/Link";
 import IssueStatusFilter from "./IssueStatusFilter";
+import { Status } from "@prisma/client";
 
-async function IssuesPage() {
-  const issues = await prisma.issue.findMany();
+async function IssuesPage({
+  searchParams,
+}: {
+  searchParams: { status: Status | "none" };
+}) {
+  let issues;
+  if (searchParams.status == "none") {
+    issues = await prisma.issue.findMany();
+  } else {
+    issues = await prisma.issue.findMany({
+      where: { status: searchParams.status },
+    });
+  }
 
   return (
     <div>
