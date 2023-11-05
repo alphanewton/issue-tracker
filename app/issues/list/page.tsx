@@ -7,12 +7,13 @@ import NewtLink from "../../components/Link";
 import IssueStatusFilter from "./IssueStatusFilter";
 import { Issue, Status } from "@prisma/client";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
+import Pagination from "@/app/components/Pagination";
 
-async function IssuesPage({
-  searchParams,
-}: {
-  searchParams: { status: Status; orderBy: keyof Issue };
-}) {
+interface Props {
+  searchParams: { status: Status; orderBy: keyof Issue; page: string };
+}
+
+async function IssuesPage({ searchParams }: Props) {
   const columns: { label: string; value: keyof Issue; className?: string }[] = [
     { label: "Issue", value: "title" },
     { label: "Status", value: "status", className: "hidden md:table-cell" },
@@ -30,10 +31,17 @@ async function IssuesPage({
       ? { [searchParams.orderBy]: "asc" }
       : undefined;
 
+  const page = parseInt(searchParams.page) || 1;
+  const pageSize = 10;
+
   const issues = await prisma.issue.findMany({
     where: { status },
     orderBy,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   });
+
+  const issueCount = await prisma.issue.count({ where: { status } });
 
   return (
     <div>
@@ -82,6 +90,11 @@ async function IssuesPage({
           ))}
         </Table.Body>
       </Table.Root>
+      <Pagination
+        pageSize={pageSize}
+        currentPage={page}
+        itemCount={issueCount}
+      />
     </div>
   );
 }
