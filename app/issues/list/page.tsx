@@ -11,7 +11,7 @@ import { ArrowUpIcon } from "@radix-ui/react-icons";
 async function IssuesPage({
   searchParams,
 }: {
-  searchParams: { status: Status | "none"; orderBy: keyof Issue };
+  searchParams: { status: Status; orderBy: keyof Issue };
 }) {
   const columns: { label: string; value: keyof Issue; className?: string }[] = [
     { label: "Issue", value: "title" },
@@ -19,14 +19,21 @@ async function IssuesPage({
     { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
   ];
 
-  let issues;
-  if (searchParams.status == "none") {
-    issues = await prisma.issue.findMany();
-  } else {
-    issues = await prisma.issue.findMany({
-      where: { status: searchParams.status },
-    });
-  }
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+
+  const orderBy =
+    searchParams.orderBy &&
+    columns.some((column) => column.value === searchParams.orderBy)
+      ? { [searchParams.orderBy]: "asc" }
+      : undefined;
+
+  const issues = await prisma.issue.findMany({
+    where: { status },
+    orderBy,
+  });
 
   return (
     <div>
