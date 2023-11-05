@@ -21,13 +21,11 @@ function AssigneeSelect({ issue }: { issue: Issue }) {
       <Select.Root
         defaultValue={issue.assignedToUserId || "none"}
         onValueChange={async (userId) => {
-          try {
-            await axios.patch("/api/issues/" + issue.id, {
+          axios
+            .patch("/api/issues/" + issue.id, {
               assignedToUserId: userId === "none" ? null : userId,
-            });
-          } catch (error) {
-            toast.error("Changes could not be saved");
-          }
+            })
+            .catch(() => toast.error("Changes could not be saved"));
         }}
       >
         <Select.Trigger placeholder="Assign..." />
